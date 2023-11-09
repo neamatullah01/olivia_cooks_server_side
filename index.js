@@ -26,13 +26,31 @@ async function run() {
     await client.connect();
 
     const topFoodCollection = client.db('restaurantDB').collection('topFood');
+    const allFoodCollection = client.db('restaurantDB').collection('allFood');
 
     app.get('/topFoods', async(req, res) =>{
         const result = await topFoodCollection.find().toArray();
-        console.log(result);
         res.send(result);
     })
+    app.get('/allFoods', async(req, res) =>{
+        const result = await allFoodCollection.find().toArray();
+        res.send(result);
+    })
+    app.get('/foodsCount', async(req, res) =>{
+      const count = await allFoodCollection.estimatedDocumentCount();
+      res.send({count});
+    })
 
+    
+    app.get('/allFoods', async(req, res) => {
+      const page = parseInt(req.query.page);
+      const size = parseInt(req.query.size);
+        const result = await allFoodCollection.find()
+        .skip(page * size)
+        .limit(size)
+        .toArray();
+        res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
