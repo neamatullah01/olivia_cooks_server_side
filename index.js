@@ -23,7 +23,7 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const topFoodCollection = client.db('restaurantDB').collection('topFood');
     const allFoodCollection = client.db('restaurantDB').collection('allFood');
@@ -35,6 +35,12 @@ async function run() {
     app.get('/allFoods', async(req, res) =>{
         const result = await allFoodCollection.find().toArray();
         res.send(result);
+    })
+    app.get('/food', async(req,res) =>{
+      const name = (req.query.name);
+      const query = {food_name:name};
+      result = await allFoodCollection.findOne(query);
+      res.send(result);
     })
     app.get('/foodsCount', async(req, res) =>{
       const count = await allFoodCollection.estimatedDocumentCount();
